@@ -87,24 +87,27 @@ public class LevelController : MonoBehaviour
                 {
                     if (collector.collectedCounter > 1)
                     {
-                        health -= collector.hpLoss;
-
-                        if (health <= 0)
-                        {
-                            health = 0;
-                            livesText.text = "Lives: " + health;
-                            damageAC.SetTrigger("Damaged");
-                            livesAC.SetTrigger("Scored");
-
-                            GameOver();
-                        }
-
                         powerUpSystem.LaunchPowerUps();
+
+                        if (!powerUpSystem.invulnerable)
+                        {
+                            health -= collector.hpLoss;
+
+                            if (health <= 0)
+                            {
+                                health = 0;
+                                livesText.text = "Lives: " + health;
+                                damageAC.SetTrigger("Damaged");
+                                livesAC.SetTrigger("Scored");
+
+                                GameOver();
+                            }
+                        }                        
 
                         livesText.text = "Lives: " + health;
                         livesAC.SetTrigger("Scored");
 
-                        int points = (int)(collector.points * (Mathf.Log10(collector.collectedCounter - 1) + 1));
+                        int points = (int)((collector.points * (Mathf.Log10(collector.collectedCounter - 1) + 1)) * powerUpSystem.multiplier);
                         score += points;
 
                         scoreText.text = "Score: " + score;
@@ -113,7 +116,7 @@ public class LevelController : MonoBehaviour
                         pointsText.transform.position = Camera.main.WorldToScreenPoint(collector.transform.position);
                         pointsText.text = "+" + points + " POINTS";
 
-                        if (collector.hpLoss > 0)
+                        if (collector.hpLoss > 0 && !powerUpSystem.invulnerable)
                         {
                             pointsText.color = new Color(1f, 0f, 0f, 0f);
                             pointsText.text += "\nDAMAGED!";
