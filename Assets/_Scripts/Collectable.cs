@@ -2,17 +2,29 @@
 using System.Collections;
 using Random = UnityEngine.Random;
 
-public class Collectable : MonoBehaviour 
+public class Collectable : MonoBehaviour
 {
+    #region variables
+
     public float points = 50f;
 
-    private Rigidbody rb;
-    private Vector3 destination;
-    private float speed;
+    [HideInInspector]
+    public bool speededUp = false;
 
-    private ParticleSystem effect;
-	
-	void Awake() 
+    [HideInInspector]
+    public bool slowedDown = false;
+
+    protected Rigidbody rb;
+    protected Vector3 destination;
+    protected float speed;
+
+    protected ParticleSystem effect;
+
+    #endregion
+
+    #region Awake function
+
+    protected virtual void Awake() 
     {
         float scale = Random.Range(-0.05f, 0.05f);
         transform.localScale += new Vector3(scale, scale, scale);
@@ -28,21 +40,31 @@ public class Collectable : MonoBehaviour
 
         destination = new Vector3(destinationX, destinationY, 0f);
 
-        speed = Random.Range(0.7f, 3.5f);
+
+
+
+        speed = Random.Range(0.7f, 3.0f);
 
         Vector3 velocityVector = destination - transform.position;
         velocityVector.Normalize();
 
         rb.velocity = velocityVector * speed;
 	}
-	
-	// Update is called once per frame
-	void Update () 
-    {
-	 
-	}
 
-    void OnTriggerExit(Collider other)
+    #endregion
+
+    #region Public functions
+
+    public void PlayExplosion()
+    {
+        effect.Play();
+    }
+
+    #endregion
+
+    #region Protected functions
+
+    protected void OnTriggerExit(Collider other)
     {
         if (other.tag == "Border")
         {
@@ -51,8 +73,5 @@ public class Collectable : MonoBehaviour
         }
     }
 
-    public void PlayExplosion()
-    {
-        effect.Play();
-    }
+    #endregion
 }

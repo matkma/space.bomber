@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CameraSetup : MonoBehaviour 
 {
-	void Start () 
+	void Start() 
     {
         Screen.autorotateToPortrait = true;
         Screen.autorotateToPortraitUpsideDown = true;

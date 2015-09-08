@@ -3,13 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class LevelController : MonoBehaviour 
+public class LevelController : MonoBehaviour
 {
+    #region variables
+
     public int health = 3;
     public int score = 0;
 
     public float spawnDelay = 0.5f;
-    public float badChance = 25f;
+    public int badChance;
+    public int powerUpChance;
     public Collectable[] goods;
     public Collectable[] bads;
     public GameObject[] spawnPoints;
@@ -35,6 +38,8 @@ public class LevelController : MonoBehaviour
     private bool touched = false;
     private Collector collector;
 
+    private PowerUpSystem powerUpSystem;
+
     private Animator scoreAC;
     private Animator pointsAC;
     private Animator livesAC;
@@ -47,26 +52,34 @@ public class LevelController : MonoBehaviour
 
     private bool gameOver = false;
     private float gameOverTimer = 0f;
-    
 
-	void Awake() 
+    #endregion
+
+    #region Awake function
+
+    void Awake() 
     {
         scoreAC = scoreText.GetComponent<Animator>();
         pointsAC = pointsText.GetComponent<Animator>();
         livesAC = livesText.GetComponent<Animator>();
         damageAC = damageImage.GetComponent<Animator>();
 
+        powerUpSystem = gameObject.GetComponent<PowerUpSystem>();
+
         scoreText.text = "Score: " + score;
 
         livesText.text = "Lives: " + health;
 	}
-	
-	void Update() 
+
+    #endregion
+
+    #region Update function
+
+    void Update() 
     {
         if (!gameOver)
         {
-            spawnCounter += Time.deltaTime;
-            cleanerCounter += Time.deltaTime;
+            #region Collector launched logic 
 
             if (collector != null && collector.launched == true)
             {
@@ -85,6 +98,8 @@ public class LevelController : MonoBehaviour
 
                             GameOver();
                         }
+
+                        powerUpSystem.LaunchPowerUps();
 
                         livesText.text = "Lives: " + health;
                         livesAC.SetTrigger("Scored");
@@ -132,20 +147,43 @@ public class LevelController : MonoBehaviour
                     collector.launchDelay += 1;
             }
 
+            #endregion
+
+            #region Spawning collectables
+
+            spawnCounter += Time.deltaTime;
+
             if (spawnCounter >= spawnDelay)
             {
                 spawnCounter = 0f;
 
-                int collectable = Random.Range(0, 3);
                 int spawnPoint = Random.Range(0, 18);
 
-                float badRoll = Random.Range(0f, 100f);
+                int spawnRoll = Random.Range(0, 100);
 
-                if (badRoll > badChance)
-                    Instantiate(goods[collectable], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                if (spawnRoll >= powerUpChance)
+                {
+                    int collectable = Random.Range(0, 3);
+
+                    spawnRoll = Random.Range(0, 100);
+
+                    if (spawnRoll >= badChance)
+                        Instantiate(goods[collectable], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                    else
+                        Instantiate(bads[collectable], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                }
                 else
-                    Instantiate(bads[collectable], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                {
+                    int powerUp = Random.Range(0, powerUpSystem.powerUps.Length);
+                    
+                    Instantiate(powerUpSystem.powerUps[powerUp], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                }
+                
             }
+
+            #endregion
+
+            #region Touch input
 
             if (Input.touchCount > 0 && pausePanel.active == false)
             {
@@ -181,15 +219,25 @@ public class LevelController : MonoBehaviour
                 }
             }
 
+            #endregion
+
+            #region Cleaning used collectors
+
+            cleanerCounter += Time.deltaTime;
+
             if (cleanerCounter >= cleanerDelay)
             {
                 cleanerCounter = 0f;
                 UsedCollectorsCleaner();
             }
+
+            #endregion
         }
 
         else
         {
+            #region Game Over display
+
             gameOverTimer += Time.deltaTime;
 
             if (gameOverTimer >= 3.2f)
@@ -221,8 +269,14 @@ public class LevelController : MonoBehaviour
                 texts[0].enabled = true;
                 endGameBox.GetComponent<Animator>().SetTrigger("Score");
             }
+
+            #endregion
         }
 	}
+
+    #endregion
+
+    #region Buttons' click functions
 
     public void PauseButtonClick()
     {
@@ -250,14 +304,18 @@ public class LevelController : MonoBehaviour
         Invoke("GameOver", 0.5f);
     }
 
-    private void RemovePausePanel()
-    {
-        pausePanel.SetActive(false);
-    }
-
     public void EndGameButtonClick()
     {
         GameController.instance.BackToMenu();
+    }
+
+    #endregion 
+
+    #region Private functions
+
+    void RemovePausePanel()
+    {
+        pausePanel.SetActive(false);
     }
 
     void GameOver()
@@ -290,4 +348,6 @@ public class LevelController : MonoBehaviour
                 Destroy(trash);
         }
     }
+
+    #endregion
 }

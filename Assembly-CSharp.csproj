@@ -46,15 +46,17 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Elementals\Scripts\OrbitCamera.cs" />
-     <Compile Include="Assets\Elementals\Scripts\TestParticles.cs" />
+     <Compile Include="Assets\Effects\Elementals\Scripts\OrbitCamera.cs" />
+     <Compile Include="Assets\Effects\Elementals\Scripts\TestParticles.cs" />
      <Compile Include="Assets\_Scripts\CameraSetup.cs" />
      <Compile Include="Assets\_Scripts\Collectable.cs" />
      <Compile Include="Assets\_Scripts\Collector.cs" />
      <Compile Include="Assets\_Scripts\GameController.cs" />
      <Compile Include="Assets\_Scripts\LevelController.cs" />
      <Compile Include="Assets\_Scripts\MenuController.cs" />
-     <None Include="Assets\Elementals\!Readme.txt" />
+     <Compile Include="Assets\_Scripts\PowerUp.cs" />
+     <Compile Include="Assets\_Scripts\PowerUpSystem.cs" />
+     <None Include="Assets\Effects\Elementals\!Readme.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

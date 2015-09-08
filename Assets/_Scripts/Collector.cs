@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Collector : MonoBehaviour 
+public class Collector : MonoBehaviour
 {
+    #region variables
+
     public float rescaleFactor = 0.03f;
 
     public bool active = false;
@@ -20,23 +22,37 @@ public class Collector : MonoBehaviour
     public int collectedCounter = 0;
 
     private ParticleSystem[] effects;
+    private PowerUpSystem powerUpSystem;
     private float effectScaleFactor = 0.1f;
 
-	// Use this for initialization
-	void Awake() 
+    #endregion
+
+    #region Awake function
+
+    void Awake() 
     {
         effects = GetComponentsInChildren<ParticleSystem>();
+        powerUpSystem = GameObject.Find("LevelController").GetComponent<PowerUpSystem>();
 	}
-	
-	// Update is called once per frame
-	void Update() 
+
+    #endregion
+
+    #region Update function
+
+    void Update() 
     {
 	    if (active)
         {
             if (gameObject.transform.localScale.x < 4.9f)
-                gameObject.transform.localScale += new Vector3(rescaleFactor, rescaleFactor, rescaleFactor);
+                gameObject.transform.localScale += new Vector3(rescaleFactor + powerUpSystem.rescaleFactor,
+                                                                rescaleFactor + powerUpSystem.rescaleFactor,
+                                                                rescaleFactor + powerUpSystem.rescaleFactor);
         }
 	}
+
+    #endregion
+
+    #region Public functions
 
     public void Launch()
     {
@@ -50,6 +66,10 @@ public class Collector : MonoBehaviour
 
         effects[0].Play();
     }
+
+    #endregion
+
+    #region Private functions
 
     void OnTriggerStay(Collider other)
     {
@@ -65,14 +85,22 @@ public class Collector : MonoBehaviour
                 hpLoss += 1;
                 collectedCounter += 1;
             }
+            else if (other.tag == "PowerUp")
+            {
+                points += other.gameObject.GetComponent<PowerUp>().points;
+                collectedCounter += 1;
+
+                if (powerUpSystem != null)
+                    powerUpSystem.CollectPowerUp(other.gameObject.GetComponent<PowerUp>());
+            }
 
             other.gameObject.GetComponent<Collectable>().PlayExplosion();
             other.gameObject.GetComponent<MeshRenderer>().enabled = false;
             other.gameObject.GetComponent<Collider>().enabled = false;
 
             Destroy(other.gameObject, 1f);
-        }  
+        }
     }
 
-
+    #endregion
 }

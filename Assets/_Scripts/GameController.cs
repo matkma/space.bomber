@@ -2,8 +2,10 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class GameController : MonoBehaviour 
+public class GameController : MonoBehaviour
 {
+    #region variables
+
     public static GameController instance = null;
 
     public Canvas blackOutPrefab;
@@ -17,7 +19,11 @@ public class GameController : MonoBehaviour
     [HideInInspector]
     public int highScore;
 
-	void Awake() 
+    #endregion
+
+    #region Awake function
+
+    void Awake() 
     {
         Input.multiTouchEnabled = false;
 
@@ -31,6 +37,10 @@ public class GameController : MonoBehaviour
         
         highScore = PlayerPrefs.GetInt("highScore", 0);
 	}
+
+    #endregion
+
+    #region Update function
 
     void Update()
     {
@@ -58,13 +68,9 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void CreateBlackOut()
-    {
-        blackOut = (Canvas)Instantiate(blackOutPrefab, transform.position, Quaternion.identity);
-        blackOutImage = blackOut.GetComponentInChildren<Image>();
+    #endregion
 
-        blackOut.gameObject.SetActive(false);
-    }
+    #region Public functions
 
     public void InitGame()
     {
@@ -87,4 +93,18 @@ public class GameController : MonoBehaviour
         PlayerPrefs.Save();
         Application.Quit();
     }
+
+    #endregion
+
+    #region Private functions
+
+    void CreateBlackOut()
+    {
+        blackOut = (Canvas)Instantiate(blackOutPrefab, transform.position, Quaternion.identity);
+        blackOutImage = blackOut.GetComponentInChildren<Image>();
+
+        blackOut.gameObject.SetActive(false);
+    }
+
+    #endregion
 }

@@ -2,12 +2,17 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class MenuController : MonoBehaviour 
+public class MenuController : MonoBehaviour
 {
-    public Button[] buttons;
-   
+    #region variables
 
-	void Awake() 
+    public Button[] buttons;
+
+    #endregion
+
+    #region Awake function
+
+    void Awake() 
     {
 
         for (int i = 0; i < buttons.Length; i++)
@@ -15,11 +20,10 @@ public class MenuController : MonoBehaviour
             buttons[i].enabled = true;
         }
 	}
-	
-	void Update() 
-    {
 
-	}
+    #endregion
+
+    #region Public functions
 
     public void StartGameClick()
     {
@@ -45,4 +49,6 @@ public class MenuController : MonoBehaviour
     {
         GameController.instance.QuitGame();
     }
+
+    #endregion
 }
