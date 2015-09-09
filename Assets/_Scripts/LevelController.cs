@@ -353,4 +353,13 @@ public class LevelController : MonoBehaviour
     }
 
     #endregion
+
+    #region Public functions
+
+    public void ResetTouches()
+    {
+        touched = false;
+    }
+
+    #endregion
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Collector : MonoBehaviour
@@ -23,6 +24,9 @@ public class Collector : MonoBehaviour
 
     private ParticleSystem[] effects;
     private PowerUpSystem powerUpSystem;
+    private Text explosionCounter;
+
+    private float explosionTimer = -1f;
     private float effectScaleFactor = 0.1f;
 
     #endregion
@@ -33,6 +37,8 @@ public class Collector : MonoBehaviour
     {
         effects = GetComponentsInChildren<ParticleSystem>();
         powerUpSystem = GameObject.Find("LevelController").GetComponent<PowerUpSystem>();
+
+        explosionCounter = GameObject.Find("ExplosionCounter").GetComponent<Text>();
 	}
 
     #endregion
@@ -47,6 +53,37 @@ public class Collector : MonoBehaviour
                 gameObject.transform.localScale += new Vector3(rescaleFactor + powerUpSystem.rescaleFactor,
                                                                 rescaleFactor + powerUpSystem.rescaleFactor,
                                                                 rescaleFactor + powerUpSystem.rescaleFactor);
+            else
+            {
+                if (explosionTimer == -1f)
+                {
+                    explosionTimer = 3f;
+
+                    explosionCounter.transform.position = Camera.main.WorldToScreenPoint(this.transform.position);
+                    explosionCounter.text = "3";
+
+                    explosionCounter.GetComponent<Animator>().SetTrigger("count");
+                }
+
+                else
+                {
+                    explosionTimer -= Time.deltaTime;
+                    explosionCounter.text = ((int)Mathf.Ceil(explosionTimer)).ToString();
+                
+                    if (explosionTimer <= float.Epsilon)
+                    {
+                        explosionTimer = -1f;
+
+                        active = false;
+                        launched = true;
+
+                        GameObject.Find("LevelController").GetComponent<LevelController>().ResetTouches();
+
+                        Launch();
+                    }
+                }
+            }
+            
         }
 	}
 
