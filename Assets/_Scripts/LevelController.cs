@@ -83,71 +83,72 @@ public class LevelController : MonoBehaviour
 
             if (collector != null && collector.launched == true)
             {
-                if (collector.launchDelay >= 1)
+                if (collector.collectedCounter > 1)
                 {
-                    if (collector.collectedCounter > 1)
+                    powerUpSystem.LaunchPowerUps();
+
+                    int points = (int)((collector.points * (Mathf.Log10(collector.collectedCounter - 1) + 1)) * powerUpSystem.multiplier);
+                    score += points;
+
+                    scoreText.text = "Score: " + score;
+                    scoreAC.SetTrigger("Scored");
+
+                    pointsText.transform.position = Camera.main.WorldToScreenPoint(collector.transform.position);
+                    pointsText.text = "+" + points + " POINTS";
+
+                    if (collector.hpLoss > 0 && !powerUpSystem.invulnerable)
                     {
-                        powerUpSystem.LaunchPowerUps();
+                        pointsText.color = new Color(1f, 0f, 0f, 0f);
+                        pointsText.text += "\nDAMAGED!";
+                        damageAC.SetTrigger("Damaged");
+                    }
+                    else
+                        pointsText.color = new Color(0.772f, 1f, 0.345f, 0f);
 
-                        if (!powerUpSystem.invulnerable)
+                    if (collector.collectedCounter > 2)
+                    {
+                        pointsText.text += "\n" + collector.collectedCounter + "x COMBO!";
+                        if (collector.collectedCounter > bestCombo)
                         {
-                            health -= collector.hpLoss;
-
-                            if (health <= 0)
-                            {
-                                health = 0;
-                                livesText.text = "Lives: " + health;
-                                damageAC.SetTrigger("Damaged");
-                                livesAC.SetTrigger("Scored");
-
-                                GameOver();
-                            }
-                        }                        
-
-                        livesText.text = "Lives: " + health;
-                        livesAC.SetTrigger("Scored");
-
-                        int points = (int)((collector.points * (Mathf.Log10(collector.collectedCounter - 1) + 1)) * powerUpSystem.multiplier);
-                        score += points;
-
-                        scoreText.text = "Score: " + score;
-                        scoreAC.SetTrigger("Scored");
-
-                        pointsText.transform.position = Camera.main.WorldToScreenPoint(collector.transform.position);
-                        pointsText.text = "+" + points + " POINTS";
-
-                        if (collector.hpLoss > 0 && !powerUpSystem.invulnerable)
-                        {
-                            pointsText.color = new Color(1f, 0f, 0f, 0f);
-                            pointsText.text += "\nDAMAGED!";
-                            damageAC.SetTrigger("Damaged");
-                        }
-                        else
-                            pointsText.color = new Color(0.772f, 1f, 0.345f, 0f);
-
-                        if (collector.collectedCounter > 2)
-                        {
-                            pointsText.text += "\n" + collector.collectedCounter + "x COMBO!";
-                            if (collector.collectedCounter > bestCombo)
-                            {
-                                bestCombo = collector.collectedCounter;
-                            }
-
-                            collectedItems += collector.collectedCounter;
+                            bestCombo = collector.collectedCounter;
                         }
 
-                        pointsAC.SetTrigger("Scored");
+                        collectedItems += collector.collectedCounter;
                     }
 
-                    collector.launched = false;
-                    collector.tag = "CollectorUsed";
-                    collector.GetComponent<MeshRenderer>().enabled = false;
+                    if (!powerUpSystem.invulnerable)
+                    {
+                        health -= collector.hpLoss;
 
-                    collector = null;
+                        if (health <= 0)
+                        {
+                            health = 0;
+                            livesText.text = "Lives: " + health;
+                            damageAC.SetTrigger("Damaged");
+                            livesAC.SetTrigger("Scored");
+
+                            GameOver();
+                        }
+                        if (collector.hpLoss > 0)
+                        {
+                            livesText.text = "Lives: " + health;
+                            livesAC.SetTrigger("Scored");
+                        }
+                    }
+
+                    pointsAC.SetTrigger("Scored");
                 }
 
-                if (collector != null)
-                    collector.launchDelay += 1;
+                else
+                {
+                    powerUpSystem.ResetPowerUps();
+                }
+
+                collector.launched = false;
+                collector.tag = "CollectorUsed";
+                collector.GetComponent<MeshRenderer>().enabled = false;
+
+                collector = null;   
             }
 
             #endregion

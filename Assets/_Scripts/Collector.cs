@@ -53,7 +53,7 @@ public class Collector : MonoBehaviour
                 gameObject.transform.localScale += new Vector3(rescaleFactor + powerUpSystem.rescaleFactor,
                                                                 rescaleFactor + powerUpSystem.rescaleFactor,
                                                                 rescaleFactor + powerUpSystem.rescaleFactor);
-            else
+            else if (this.tag == "Collector")
             {
                 if (explosionTimer == -1f)
                 {
@@ -100,6 +100,8 @@ public class Collector : MonoBehaviour
         {
             effect.startSize = scale * effectScaleFactor;
         }
+
+        explosionCounter.GetComponent<Animator>().SetTrigger("stop");
 
         effects[0].Play();
     }

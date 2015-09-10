@@ -164,6 +164,12 @@ public class PowerUpSystem : MonoBehaviour
         }
     }
 
+    public void ResetPowerUps()
+    {
+        if (collectedPowerUps.Count > 0)
+            collectedPowerUps.Clear();
+    }
+
     public void LaunchPowerUps()
     {
         if (collectedPowerUps.Count > 0)
