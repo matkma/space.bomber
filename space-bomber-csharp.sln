@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 Project("{421316FD-390D-CC05-7DDB-9D67B0504FC3}") = "space-bomber", "Assembly-CSharp-vs.csproj", "{76CB8A29-F890-441F-E2E3-C263DF1E8E27}"
 EndProject
+Project("{421316FD-390D-CC05-7DDB-9D67B0504FC3}") = "space-bomber", "Assembly-CSharp-Editor-vs.csproj", "{F46F9869-ED34-F1E9-58B0-16001AE8DF19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,11 +15,15 @@ Global
 		{76CB8A29-F890-441F-E2E3-C263DF1E8E27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76CB8A29-F890-441F-E2E3-C263DF1E8E27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76CB8A29-F890-441F-E2E3-C263DF1E8E27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F46F9869-ED34-F1E9-58B0-16001AE8DF19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F46F9869-ED34-F1E9-58B0-16001AE8DF19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F46F9869-ED34-F1E9-58B0-16001AE8DF19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F46F9869-ED34-F1E9-58B0-16001AE8DF19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-		GlobalSection(MonoDevelopProperties) = preSolution
+							GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
