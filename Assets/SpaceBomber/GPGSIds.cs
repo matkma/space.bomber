@@ -25,7 +25,39 @@ namespace SpaceBomber
 {
 public static class GPGSIds
 {
+        public const string achievement_incredible_combo = "CgkIwp_Z9tsbEAIQJA"; // <GPGSID>
+        public const string achievement_silver = "CgkIwp_Z9tsbEAIQDA"; // <GPGSID>
+        public const string achievement_typical_combo = "CgkIwp_Z9tsbEAIQHA"; // <GPGSID>
+        public const string achievement_legendary_collector = "CgkIwp_Z9tsbEAIQGg"; // <GPGSID>
+        public const string achievement_gold = "CgkIwp_Z9tsbEAIQDQ"; // <GPGSID>
+        public const string achievement_average_combo = "CgkIwp_Z9tsbEAIQHQ"; // <GPGSID>
+        public const string achievement_combo_sensei = "CgkIwp_Z9tsbEAIQFA"; // <GPGSID>
+        public const string achievement_deeply_wounded = "CgkIwp_Z9tsbEAIQCA"; // <GPGSID>
+        public const string achievement_excellent_combo = "CgkIwp_Z9tsbEAIQIQ"; // <GPGSID>
+        public const string achievement_combo_osensei = "CgkIwp_Z9tsbEAIQFQ"; // <GPGSID>
+        public const string achievement_wounded = "CgkIwp_Z9tsbEAIQBw"; // <GPGSID>
+        public const string achievement_platinum = "CgkIwp_Z9tsbEAIQDg"; // <GPGSID>
+        public const string achievement_diamond = "CgkIwp_Z9tsbEAIQDw"; // <GPGSID>
+        public const string achievement_bronze = "CgkIwp_Z9tsbEAIQCw"; // <GPGSID>
+        public const string achievement_legendary_combo = "CgkIwp_Z9tsbEAIQIw"; // <GPGSID>
+        public const string achievement_godlike_combo = "CgkIwp_Z9tsbEAIQJQ"; // <GPGSID>
+        public const string achievement_injured = "CgkIwp_Z9tsbEAIQBg"; // <GPGSID>
+        public const string achievement_collector = "CgkIwp_Z9tsbEAIQFg"; // <GPGSID>
+        public const string achievement_lethally_wounded = "CgkIwp_Z9tsbEAIQCg"; // <GPGSID>
+        public const string achievement_good_combo = "CgkIwp_Z9tsbEAIQHg"; // <GPGSID>
+        public const string achievement_scrupulous_collector = "CgkIwp_Z9tsbEAIQGA"; // <GPGSID>
+        public const string achievement_combo_senpai = "CgkIwp_Z9tsbEAIQEg"; // <GPGSID>
+        public const string achievement_combo_ninja = "CgkIwp_Z9tsbEAIQEw"; // <GPGSID>
+        public const string achievement_grand_collector = "CgkIwp_Z9tsbEAIQGQ"; // <GPGSID>
         public const string leaderboard_high_scores = "CgkIwp_Z9tsbEAIQAw"; // <GPGSID>
+        public const string achievement_awesome_combo = "CgkIwp_Z9tsbEAIQIA"; // <GPGSID>
+        public const string achievement_great_combo = "CgkIwp_Z9tsbEAIQHw"; // <GPGSID>
+        public const string achievement_combo_apprentice = "CgkIwp_Z9tsbEAIQEA"; // <GPGSID>
+        public const string achievement_patient_collector = "CgkIwp_Z9tsbEAIQFw"; // <GPGSID>
+        public const string achievement_mega_combo = "CgkIwp_Z9tsbEAIQIg"; // <GPGSID>
+        public const string achievement_mini_combo = "CgkIwp_Z9tsbEAIQGw"; // <GPGSID>
+        public const string achievement_badly_wounded = "CgkIwp_Z9tsbEAIQCQ"; // <GPGSID>
+        public const string achievement_combo_adept = "CgkIwp_Z9tsbEAIQEQ"; // <GPGSID>
 
 }
 }

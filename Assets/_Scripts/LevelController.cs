@@ -254,6 +254,8 @@ public class LevelController : MonoBehaviour
                     GameController.instance.highScore = score;
                     PlayerPrefs.SetInt("highScore", score);
                     PlayerPrefs.Save();
+
+                    GameController.instance.CheckScoreAchievements();
                 }
             }
             else if (gameOverTimer >= 2.8f && texts[3].enabled == false)

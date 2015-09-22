@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using GooglePlayGames;
 
 public class MenuController : MonoBehaviour
 {
@@ -57,16 +58,24 @@ public class MenuController : MonoBehaviour
 
     public void HighScoresClick()
     {
-
+        if (Social.localUser.authenticated)
+        {
+            Social.ShowLeaderboardUI();
+        }
     }
 
     public void AchievementsClick()
     {
-
+        if (Social.localUser.authenticated)
+        {
+            Social.ShowAchievementsUI();
+        }
     }
 
     public void QuitGameClick()
     {
+        ((PlayGamesPlatform)Social.Active).SignOut();
+
         GameController.instance.QuitGame();
     }
 
