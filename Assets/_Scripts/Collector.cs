@@ -14,6 +14,9 @@ public class Collector : MonoBehaviour
     public int launchDelay = 0;
 
     [HideInInspector]
+    public int explosionDuration = -1;
+
+    [HideInInspector]
     public float points = 0f;
 
     [HideInInspector]
@@ -21,6 +24,12 @@ public class Collector : MonoBehaviour
 
     [HideInInspector]
     public int collectedCounter = 0;
+
+    [HideInInspector]
+    public bool rasta = false;
+    private bool yellow = false;
+    private bool red = false;
+    private bool green = false;
 
     private ParticleSystem[] effects;
     private PowerUpSystem powerUpSystem;
@@ -53,6 +62,7 @@ public class Collector : MonoBehaviour
                 gameObject.transform.localScale += new Vector3(rescaleFactor + powerUpSystem.rescaleFactor,
                                                                 rescaleFactor + powerUpSystem.rescaleFactor,
                                                                 rescaleFactor + powerUpSystem.rescaleFactor);
+                
             else if (this.tag == "Collector")
             {
                 if (explosionTimer == -1f)
@@ -83,7 +93,11 @@ public class Collector : MonoBehaviour
                     }
                 }
             }
-            
+        }
+
+        if (this.tag == "CollectorLaunched" && explosionDuration != 0)
+        {
+            explosionDuration -= 1;
         }
 	}
 
@@ -103,6 +117,8 @@ public class Collector : MonoBehaviour
 
         explosionCounter.GetComponent<Animator>().SetTrigger("stop");
 
+        explosionDuration = 3;
+
         effects[0].Play();
     }
 
@@ -118,11 +134,24 @@ public class Collector : MonoBehaviour
             {
                 points += other.gameObject.GetComponent<Collectable>().points;
                 collectedCounter += 1;
+
+                if (other.gameObject.GetComponent<Collectable>().color != null)
+                {
+                    if (other.gameObject.GetComponent<Collectable>().color == "Yellow")
+                    {
+                        yellow = true;
+                    }
+                    else if (other.gameObject.GetComponent<Collectable>().color == "Green")
+                    {
+                        green = true;
+                    }
+                }    
             }
             else if (other.tag == "Bad")
             {
                 hpLoss += 1;
                 collectedCounter += 1;
+                red = true;
             }
             else if (other.tag == "PowerUp")
             {
@@ -136,6 +165,11 @@ public class Collector : MonoBehaviour
             other.gameObject.GetComponent<Collectable>().PlayExplosion();
             other.gameObject.GetComponent<MeshRenderer>().enabled = false;
             other.gameObject.GetComponent<Collider>().enabled = false;
+
+            if (red && yellow && green)
+            {
+                rasta = true;
+            }
 
             Destroy(other.gameObject, 1f);
         }

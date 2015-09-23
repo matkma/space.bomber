@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using GooglePlayGames;
 
 public class LevelController : MonoBehaviour
 {
@@ -81,11 +82,16 @@ public class LevelController : MonoBehaviour
         {
             #region Collector launched logic 
 
-            if (collector != null && collector.launched == true)
+            if (collector != null && collector.explosionDuration == 0 && collector.launched == true)
             {
                 if (collector.collectedCounter > 1)
                 {
                     powerUpSystem.LaunchPowerUps();
+
+                    GameController.instance.itemsCount += collector.collectedCounter;
+                    PlayerPrefs.SetInt("itemsCount", GameController.instance.itemsCount);
+
+                    GameController.instance.CheckCollectorAchievements();
 
                     int points = (int)((collector.points * (Mathf.Log10(collector.collectedCounter - 1) + 1)) * powerUpSystem.multiplier);
                     score += points;
@@ -96,11 +102,18 @@ public class LevelController : MonoBehaviour
                     pointsText.transform.position = Camera.main.WorldToScreenPoint(collector.transform.position);
                     pointsText.text = "+" + points + " POINTS";
 
+                    GameController.instance.CheckScoreAchievements();
+
                     if (collector.hpLoss > 0 && !powerUpSystem.invulnerable)
                     {
                         pointsText.color = new Color(1f, 0f, 0f, 0f);
                         pointsText.text += "\nDAMAGED!";
                         damageAC.SetTrigger("Damaged");
+
+                        GameController.instance.redsCount += collector.hpLoss;
+                        PlayerPrefs.SetInt("redsCount", GameController.instance.redsCount);
+
+                        GameController.instance.CheckDamageAchievements();
                     }
                     else
                         pointsText.color = new Color(0.772f, 1f, 0.345f, 0f);
@@ -114,6 +127,27 @@ public class LevelController : MonoBehaviour
                         }
 
                         collectedItems += collector.collectedCounter;
+
+                        if (powerUpSystem.invulnerable || collector.hpLoss == 0)
+                        {
+                            GameController.instance.CheckBestComboAchievements(collector.collectedCounter);
+                        } 
+
+                        if (collector.collectedCounter == 3)
+                        {
+                            if (collector.rasta == true)
+                            {
+                                GameController.instance.GetRastaAchievement();
+                            }
+                        }
+
+                        else if (collector.collectedCounter > 3)
+                        {
+                            GameController.instance.combosCount += 1;
+                            PlayerPrefs.SetInt("combosCount", GameController.instance.combosCount);
+
+                            GameController.instance.CheckCombosAchievements();
+                        }
                     }
 
                     if (!powerUpSystem.invulnerable)
@@ -136,6 +170,7 @@ public class LevelController : MonoBehaviour
                         }
                     }
 
+                    PlayerPrefs.Save();
                     pointsAC.SetTrigger("Scored");
                 }
 
@@ -172,9 +207,27 @@ public class LevelController : MonoBehaviour
                     spawnRoll = Random.Range(0, 100);
 
                     if (spawnRoll >= badChance)
-                        Instantiate(goods[collectable], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                    {
+                        Collectable col = (Collectable)Instantiate(goods[collectable], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                        switch(collectable)
+                        {
+                            case 0:
+                                col.color = "Green";
+                                break;
+                            case 1:
+                                col.color = "Cyan";
+                                break;
+                            case 2:
+                                col.color = "Yellow";
+                                break;
+                        }
+                    }
                     else
-                        Instantiate(bads[collectable], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                    {
+                        Collectable col = (Collectable)Instantiate(bads[collectable], spawnPoints[spawnPoint].transform.position, Quaternion.identity);
+                        col.color = "Red";
+                    }
+                        
                 }
                 else
                 {
@@ -248,14 +301,15 @@ public class LevelController : MonoBehaviour
             {
                 endGameButton.enabled = true;
 
+                if (Social.localUser.authenticated)
+                    Social.ReportScore(score, SpaceBomber.GPGSIds.leaderboard_high_scores, (bool success) => { });
+
                 if (score > GameController.instance.highScore)
                 {
                     texts[4].enabled = true;
                     GameController.instance.highScore = score;
                     PlayerPrefs.SetInt("highScore", score);
                     PlayerPrefs.Save();
-
-                    GameController.instance.CheckScoreAchievements();
                 }
             }
             else if (gameOverTimer >= 2.8f && texts[3].enabled == false)

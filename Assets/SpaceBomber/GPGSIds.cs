@@ -44,6 +44,7 @@ public static class GPGSIds
         public const string achievement_injured = "CgkIwp_Z9tsbEAIQBg"; // <GPGSID>
         public const string achievement_collector = "CgkIwp_Z9tsbEAIQFg"; // <GPGSID>
         public const string achievement_lethally_wounded = "CgkIwp_Z9tsbEAIQCg"; // <GPGSID>
+        public const string achievement_rasta = "CgkIwp_Z9tsbEAIQJg"; // <GPGSID>
         public const string achievement_good_combo = "CgkIwp_Z9tsbEAIQHg"; // <GPGSID>
         public const string achievement_scrupulous_collector = "CgkIwp_Z9tsbEAIQGA"; // <GPGSID>
         public const string achievement_combo_senpai = "CgkIwp_Z9tsbEAIQEg"; // <GPGSID>

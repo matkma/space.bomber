@@ -10,13 +10,17 @@ public class MenuController : MonoBehaviour
     public Button[] buttons;
     public GameObject mainMenu;
     public GameObject instruction;
+    public GameObject highScores;
+    public Text bestScore;
     public GameObject[] instrunctionPages;
 
     private Button nextButton;
     private Button prevButton;
+    private GameObject buttonsPanel;
 
     private Animator menuAnimator;
     private Animator instructionAnimator;
+    private Animator highScoresAnimator;
     private int page = 1;
 
     #endregion
@@ -31,15 +35,26 @@ public class MenuController : MonoBehaviour
         }
 
         instruction.SetActive(true);
+        highScores.SetActive(true);
 
         nextButton = GameObject.Find("Next").GetComponent<Button>();
         prevButton = GameObject.Find("Prev").GetComponent<Button>();
 
         menuAnimator = mainMenu.GetComponent<Animator>();
         instructionAnimator = instruction.GetComponent<Animator>();
+        highScoresAnimator = highScores.GetComponent<Animator>();
 
         prevButton.enabled = false;
 	}
+
+    #endregion
+
+    #region Update function
+
+    void Update()
+    {
+        SetLogInButton();
+    }
 
     #endregion
 
@@ -58,10 +73,9 @@ public class MenuController : MonoBehaviour
 
     public void HighScoresClick()
     {
-        if (Social.localUser.authenticated)
-        {
-            Social.ShowLeaderboardUI();
-        }
+        bestScore.text = GameController.instance.highScore.ToString();
+        menuAnimator.SetTrigger("forward");
+        highScoresAnimator.SetTrigger("forward");
     }
 
     public void AchievementsClick()
@@ -74,9 +88,52 @@ public class MenuController : MonoBehaviour
 
     public void QuitGameClick()
     {
-        ((PlayGamesPlatform)Social.Active).SignOut();
-
         GameController.instance.QuitGame();
+    }
+
+    public void LogInClick()
+    {
+        if (Social.localUser.authenticated)
+        {
+            PlayGamesPlatform.Instance.ShowLeaderboardUI(SpaceBomber.GPGSIds.leaderboard_high_scores);
+        }
+        else
+        {
+            Social.localUser.Authenticate((bool success) => { });
+        }
+
+        SetLogInButton();
+    }
+
+    public void MuteClick()
+    {
+        if (GameController.instance.muted == 0)
+        {
+            GameController.instance.muted = 1;
+            PlayerPrefs.SetInt("muted", 1);
+        }
+        else
+        {
+            GameController.instance.muted = 0;
+            PlayerPrefs.SetInt("muted", 0);
+        }
+
+        SetMuteButton();
+        PlayerPrefs.Save();
+    }
+
+    public void GlobalClick()
+    {
+        if (Social.localUser.authenticated)
+        {
+            ((PlayGamesPlatform) Social.Active).ShowLeaderboardUI(SpaceBomber.GPGSIds.leaderboard_high_scores);
+        }
+    }
+
+    public void BackClick()
+    {
+        highScoresAnimator.SetTrigger("back");
+        menuAnimator.SetTrigger("back");
     }
 
     public void GotItClick()
@@ -134,6 +191,30 @@ public class MenuController : MonoBehaviour
         }
 
         instrunctionPages[0].SetActive(true);
+    }
+
+    void SetLogInButton()
+    {
+        if (Social.localUser.authenticated)
+        {
+            buttons[6].GetComponentInChildren<Text>().text = "Logout";
+        }
+        else
+        {
+            buttons[6].GetComponentInChildren<Text>().text = "Login";
+        }
+    }
+
+    void SetMuteButton()
+    {
+        if (GameController.instance.muted == 0)
+        {
+            buttons[5].GetComponentInChildren<Text>().text = "Mute";
+        }
+        else
+        {
+            buttons[5].GetComponentInChildren<Text>().text = "Unmute";
+        }
     }
 
     #endregion

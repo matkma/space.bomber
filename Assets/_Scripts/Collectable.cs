@@ -14,6 +14,9 @@ public class Collectable : MonoBehaviour
     [HideInInspector]
     public bool slowedDown = false;
 
+    [HideInInspector]
+    public string color = null;
+
     protected Rigidbody rb;
     protected Vector3 destination;
     protected float speed;
