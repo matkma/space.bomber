@@ -31,6 +31,7 @@ public static class GPGSIds
         public const string achievement_legendary_collector = "CgkIwp_Z9tsbEAIQGg"; // <GPGSID>
         public const string achievement_gold = "CgkIwp_Z9tsbEAIQDQ"; // <GPGSID>
         public const string achievement_average_combo = "CgkIwp_Z9tsbEAIQHQ"; // <GPGSID>
+        public const string leaderboard_best_combo = "CgkIwp_Z9tsbEAIQJw"; // <GPGSID>
         public const string achievement_combo_sensei = "CgkIwp_Z9tsbEAIQFA"; // <GPGSID>
         public const string achievement_deeply_wounded = "CgkIwp_Z9tsbEAIQCA"; // <GPGSID>
         public const string achievement_excellent_combo = "CgkIwp_Z9tsbEAIQIQ"; // <GPGSID>

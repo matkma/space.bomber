@@ -91,7 +91,7 @@ public class LevelController : MonoBehaviour
                     GameController.instance.itemsCount += collector.collectedCounter;
                     PlayerPrefs.SetInt("itemsCount", GameController.instance.itemsCount);
 
-                    GameController.instance.CheckCollectorAchievements();
+                    GameController.instance.CheckCollectorAchievements(collector.collectedCounter);
 
                     int points = (int)((collector.points * (Mathf.Log10(collector.collectedCounter - 1) + 1)) * powerUpSystem.multiplier);
                     score += points;
@@ -113,7 +113,7 @@ public class LevelController : MonoBehaviour
                         GameController.instance.redsCount += collector.hpLoss;
                         PlayerPrefs.SetInt("redsCount", GameController.instance.redsCount);
 
-                        GameController.instance.CheckDamageAchievements();
+                        GameController.instance.CheckDamageAchievements(collector.hpLoss);
                     }
                     else
                         pointsText.color = new Color(0.772f, 1f, 0.345f, 0f);
@@ -131,6 +131,13 @@ public class LevelController : MonoBehaviour
                         if (powerUpSystem.invulnerable || collector.hpLoss == 0)
                         {
                             GameController.instance.CheckBestComboAchievements(collector.collectedCounter);
+                            
+                            if (collector.collectedCounter > GameController.instance.bestCombo)
+                            {
+                                GameController.instance.bestCombo = collector.collectedCounter;
+                                PlayerPrefs.SetInt("bestCombo", collector.collectedCounter);
+                                Social.ReportScore(collector.collectedCounter, SpaceBomber.GPGSIds.leaderboard_best_combo, (bool success) => { });
+                            }
                         } 
 
                         if (collector.collectedCounter == 3)

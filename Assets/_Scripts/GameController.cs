@@ -32,6 +32,11 @@ public class GameController : MonoBehaviour
     [HideInInspector]
     public int combosCount;
 
+    [HideInInspector]
+    public int bestCombo;
+
+    private int collectorAchievementStepCounter;
+
     #endregion
 
     #region Awake function
@@ -52,8 +57,11 @@ public class GameController : MonoBehaviour
         redsCount = PlayerPrefs.GetInt("redsCount", 0);
         itemsCount = PlayerPrefs.GetInt("itemsCount", 0);
         combosCount = PlayerPrefs.GetInt("combosCount", 0);
+        bestCombo = PlayerPrefs.GetInt("bestCombo", 0);
 
         muted = PlayerPrefs.GetInt("muted", 1);
+
+        collectorAchievementStepCounter = itemsCount % 10;
 
         PlayGamesPlatform.Activate();
   
@@ -149,27 +157,27 @@ public class GameController : MonoBehaviour
         GetAchievement(SpaceBomber.GPGSIds.achievement_rasta);
     }
 
-    public void CheckDamageAchievements()
+    public void CheckDamageAchievements(int inc)
     {
-        if (redsCount >= 1)
+        if (redsCount <= 10000)
         {
-            GetAchievement(SpaceBomber.GPGSIds.achievement_injured);
+            PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_lethally_wounded, inc, (bool success) => { });
 
-            if (redsCount >= 50)
+            if (redsCount <= 2000)
             {
-                GetAchievement(SpaceBomber.GPGSIds.achievement_wounded);
+                PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_badly_wounded, inc, (bool success) => { });
 
-                if (redsCount >= 500)
+                if (redsCount <= 500)
                 {
-                    GetAchievement(SpaceBomber.GPGSIds.achievement_deeply_wounded);
+                    PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_deeply_wounded, inc, (bool success) => { });
 
-                    if (redsCount >= 2000)
+                    if (redsCount <= 50)
                     {
-                        GetAchievement(SpaceBomber.GPGSIds.achievement_badly_wounded);
+                        PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_wounded, inc, (bool success) => { });
 
-                        if (redsCount >= 10000)
+                        if (redsCount <= 1)
                         {
-                            GetAchievement(SpaceBomber.GPGSIds.achievement_lethally_wounded);
+                            GetAchievement(SpaceBomber.GPGSIds.achievement_injured);
                         }
                     }
                 }
@@ -179,29 +187,29 @@ public class GameController : MonoBehaviour
 
     public void CheckCombosAchievements()
     {
-        if (combosCount >= 1)
+        if (combosCount >= 5000)
         {
-            GetAchievement(SpaceBomber.GPGSIds.achievement_combo_apprentice);
+            PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_osensei, 1, (bool success) => { });
 
-            if (combosCount >= 25)
+            if (combosCount >= 1000)
             {
-                GetAchievement(SpaceBomber.GPGSIds.achievement_combo_adept);
+                PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_sensei, 1, (bool success) => { });
 
-                if (combosCount >= 100)
+                if (combosCount >= 250)
                 {
-                    GetAchievement(SpaceBomber.GPGSIds.achievement_combo_senpai);
+                    PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_ninja, 1, (bool success) => { });
 
-                    if (combosCount >= 250)
+                    if (combosCount >= 100)
                     {
-                        GetAchievement(SpaceBomber.GPGSIds.achievement_combo_ninja);
+                        PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_senpai, 1, (bool success) => { });
 
-                        if (combosCount >= 1000)
+                        if (combosCount >= 25)
                         {
-                            GetAchievement(SpaceBomber.GPGSIds.achievement_combo_sensei);
+                            PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_adept, 1, (bool success) => { });
 
-                            if (combosCount >= 5000)
+                            if (combosCount >= 1)
                             {
-                                GetAchievement(SpaceBomber.GPGSIds.achievement_combo_osensei);
+                                GetAchievement(SpaceBomber.GPGSIds.achievement_combo_apprentice);
                             }
                         }
                     }
@@ -210,27 +218,37 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void CheckCollectorAchievements()
+    public void CheckCollectorAchievements(int inc)
     {
-        if (itemsCount >= 100)
+        if (itemsCount >= 50000)
         {
-            GetAchievement(SpaceBomber.GPGSIds.achievement_collector);
+            collectorAchievementStepCounter += inc;
+            int step = 0;
 
-            if (itemsCount >= 1000)
+            while (collectorAchievementStepCounter >= 10)
             {
-                GetAchievement(SpaceBomber.GPGSIds.achievement_patient_collector);
+                collectorAchievementStepCounter -= 10;
+                step += 1;
+            }
+            
+            if (step != 0)
+                PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_legendary_collector, step, (bool success) => { });
+
+            if (itemsCount >= 10000)
+            {
+                PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_grand_collector, inc, (bool success) => { });
 
                 if (itemsCount >= 2500)
                 {
-                    GetAchievement(SpaceBomber.GPGSIds.achievement_scrupulous_collector);
+                    PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_scrupulous_collector, inc, (bool success) => { });
 
-                    if (itemsCount >= 10000)
+                    if (itemsCount >= 1000)
                     {
-                        GetAchievement(SpaceBomber.GPGSIds.achievement_grand_collector);
+                        PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_patient_collector, inc, (bool success) => { });
 
-                        if (itemsCount >= 50000)
+                        if (itemsCount >= 100)
                         {
-                            GetAchievement(SpaceBomber.GPGSIds.achievement_legendary_collector);
+                            PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_collector, inc, (bool success) => { });
                         }
                     }
                 }

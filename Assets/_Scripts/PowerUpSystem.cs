@@ -20,7 +20,7 @@ public class PowerUpSystem : MonoBehaviour
     private LevelController levelController;
     private List<PowerUp> collectedPowerUps;
 
-    private float fasterSpawnDelay = 0.2f;
+    private float fasterSpawnDelay = 0.15f;
     private float slowerSpawnDelay = 1f;
     private float spawnDelay;
 
@@ -240,7 +240,7 @@ public class PowerUpSystem : MonoBehaviour
                 foreach (Collectable col in collectables)
                 {
                     if (!col.speededUp)
-                        col.GetComponent<Rigidbody>().velocity *= 2f;
+                        col.GetComponent<Rigidbody>().velocity *= 4f;
                 }
             }
             else
@@ -248,7 +248,7 @@ public class PowerUpSystem : MonoBehaviour
                 foreach (Collectable col in collectables)
                 {
                     if (!col.slowedDown)
-                        col.GetComponent<Rigidbody>().velocity *= 0.5f;
+                        col.GetComponent<Rigidbody>().velocity *= 0.25f;
                 }
             }
         }
@@ -259,7 +259,7 @@ public class PowerUpSystem : MonoBehaviour
                 foreach (Collectable col in collectables)
                 {
                     if (col.speededUp)
-                        col.GetComponent<Rigidbody>().velocity *= 0.5f;
+                        col.GetComponent<Rigidbody>().velocity *= 0.25f;
                 }
             }
             else
@@ -267,7 +267,7 @@ public class PowerUpSystem : MonoBehaviour
                 foreach (Collectable col in collectables)
                 {
                     if (col.slowedDown)
-                        col.GetComponent<Rigidbody>().velocity *= 2f;
+                        col.GetComponent<Rigidbody>().velocity *= 4f;
                 }
             }
         }

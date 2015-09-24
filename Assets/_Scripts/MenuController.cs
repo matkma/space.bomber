@@ -12,6 +12,7 @@ public class MenuController : MonoBehaviour
     public GameObject instruction;
     public GameObject highScores;
     public Text bestScore;
+    public Text bestCombo;
     public GameObject[] instrunctionPages;
 
     private Button nextButton;
@@ -74,6 +75,7 @@ public class MenuController : MonoBehaviour
     public void HighScoresClick()
     {
         bestScore.text = GameController.instance.highScore.ToString();
+        bestCombo.text = GameController.instance.bestCombo.ToString();
         menuAnimator.SetTrigger("forward");
         highScoresAnimator.SetTrigger("forward");
     }
@@ -95,7 +97,7 @@ public class MenuController : MonoBehaviour
     {
         if (Social.localUser.authenticated)
         {
-            PlayGamesPlatform.Instance.ShowLeaderboardUI(SpaceBomber.GPGSIds.leaderboard_high_scores);
+            PlayGamesPlatform.Instance.SignOut();
         }
         else
         {
@@ -126,7 +128,7 @@ public class MenuController : MonoBehaviour
     {
         if (Social.localUser.authenticated)
         {
-            ((PlayGamesPlatform) Social.Active).ShowLeaderboardUI(SpaceBomber.GPGSIds.leaderboard_high_scores);
+            Social.ShowLeaderboardUI();
         }
     }
 
