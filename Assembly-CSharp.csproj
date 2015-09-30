@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AudioController.cs" />
      <Compile Include="Assets\Effects\Elementals\Scripts\OrbitCamera.cs" />
      <Compile Include="Assets\Effects\Elementals\Scripts\TestParticles.cs" />
      <Compile Include="Assets\GooglePlayGames\BasicApi\Achievement.cs" />

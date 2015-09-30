@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using GooglePlayGames;
+using Random = UnityEngine.Random;
 
 public class LevelController : MonoBehaviour
 {
@@ -54,6 +55,8 @@ public class LevelController : MonoBehaviour
     private bool gameOver = false;
     private float gameOverTimer = 0f;
 
+    private AudioSource[] sources;
+
     #endregion
 
     #region Awake function
@@ -70,6 +73,17 @@ public class LevelController : MonoBehaviour
         scoreText.text = "Score: " + score;
 
         livesText.text = "Lives: " + health;
+
+        sources = gameObject.GetComponents<AudioSource>();
+
+        if (Random.Range(0, 2) == 1)
+        {
+            sources[0].Play();
+        }
+        else
+        {
+            sources[1].Play();
+        }
 	}
 
     #endregion
@@ -102,7 +116,6 @@ public class LevelController : MonoBehaviour
                     pointsText.transform.position = Camera.main.WorldToScreenPoint(collector.transform.position);
                     pointsText.text = "+" + points + " POINTS";
 
-                    GameController.instance.CheckScoreAchievements();
 
                     if (collector.hpLoss > 0 && !powerUpSystem.invulnerable)
                     {
@@ -317,6 +330,8 @@ public class LevelController : MonoBehaviour
                     GameController.instance.highScore = score;
                     PlayerPrefs.SetInt("highScore", score);
                     PlayerPrefs.Save();
+
+                    GameController.instance.CheckScoreAchievements();
                 }
             }
             else if (gameOverTimer >= 2.8f && texts[3].enabled == false)
@@ -373,6 +388,15 @@ public class LevelController : MonoBehaviour
 
     public void EndGameButtonClick()
     {
+        if (sources[0].isPlaying)
+        {
+            sources[0].Stop();
+        }
+        else
+        {
+            sources[1].Stop();
+        }
+
         GameController.instance.BackToMenu();
     }
 

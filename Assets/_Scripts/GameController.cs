@@ -14,6 +14,9 @@ public class GameController : MonoBehaviour
     private Canvas blackOut;
     private Image blackOutImage;
 
+    [HideInInspector]
+    public AudioController audioController;
+
     private bool levelLaunched = false;
     private bool backToMenu = false;
 
@@ -60,6 +63,17 @@ public class GameController : MonoBehaviour
         bestCombo = PlayerPrefs.GetInt("bestCombo", 0);
 
         muted = PlayerPrefs.GetInt("muted", 1);
+
+        audioController = gameObject.GetComponent<AudioController>();
+
+        if (muted == 1)
+        {
+            GameController.instance.audioController.Mute(true);
+        }
+        else
+        {
+            GameController.instance.audioController.Mute(false);
+        }
 
         collectorAchievementStepCounter = itemsCount % 10;
 
@@ -187,23 +201,23 @@ public class GameController : MonoBehaviour
 
     public void CheckCombosAchievements()
     {
-        if (combosCount >= 5000)
+        if (combosCount <= 5000)
         {
             PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_osensei, 1, (bool success) => { });
 
-            if (combosCount >= 1000)
+            if (combosCount <= 1000)
             {
                 PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_sensei, 1, (bool success) => { });
 
-                if (combosCount >= 250)
+                if (combosCount <= 250)
                 {
                     PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_ninja, 1, (bool success) => { });
 
-                    if (combosCount >= 100)
+                    if (combosCount <= 100)
                     {
                         PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_senpai, 1, (bool success) => { });
 
-                        if (combosCount >= 25)
+                        if (combosCount <= 25)
                         {
                             PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_combo_adept, 1, (bool success) => { });
 
@@ -220,7 +234,7 @@ public class GameController : MonoBehaviour
 
     public void CheckCollectorAchievements(int inc)
     {
-        if (itemsCount >= 50000)
+        if (itemsCount <= 50000)
         {
             collectorAchievementStepCounter += inc;
             int step = 0;
@@ -234,19 +248,19 @@ public class GameController : MonoBehaviour
             if (step != 0)
                 PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_legendary_collector, step, (bool success) => { });
 
-            if (itemsCount >= 10000)
+            if (itemsCount <= 10000)
             {
                 PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_grand_collector, inc, (bool success) => { });
 
-                if (itemsCount >= 2500)
+                if (itemsCount <= 2500)
                 {
                     PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_scrupulous_collector, inc, (bool success) => { });
 
-                    if (itemsCount >= 1000)
+                    if (itemsCount <= 1000)
                     {
                         PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_patient_collector, inc, (bool success) => { });
 
-                        if (itemsCount >= 100)
+                        if (itemsCount <= 100)
                         {
                             PlayGamesPlatform.Instance.IncrementAchievement(SpaceBomber.GPGSIds.achievement_collector, inc, (bool success) => { });
                         }
@@ -291,8 +305,9 @@ public class GameController : MonoBehaviour
             case 14:
                 GetAchievement(SpaceBomber.GPGSIds.achievement_incredible_combo);
                 break;
-            case 15:
-                GetAchievement(SpaceBomber.GPGSIds.achievement_godlike_combo);
+            default:
+                if (combo >= 15)
+                    GetAchievement(SpaceBomber.GPGSIds.achievement_godlike_combo);
                 break;
         }
     }

@@ -38,6 +38,8 @@ public class Collector : MonoBehaviour
     private float explosionTimer = -1f;
     private float effectScaleFactor = 0.1f;
 
+    private AudioSource source;
+
     #endregion
 
     #region Awake function
@@ -48,6 +50,8 @@ public class Collector : MonoBehaviour
         powerUpSystem = GameObject.Find("LevelController").GetComponent<PowerUpSystem>();
 
         explosionCounter = GameObject.Find("ExplosionCounter").GetComponent<Text>();
+
+        source = gameObject.GetComponent<AudioSource>();
 	}
 
     #endregion
@@ -114,6 +118,8 @@ public class Collector : MonoBehaviour
         {
             effect.startSize = scale * effectScaleFactor;
         }
+
+        source.Play();
 
         explosionCounter.GetComponent<Animator>().SetTrigger("stop");
 

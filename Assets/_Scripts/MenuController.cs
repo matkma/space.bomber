@@ -24,6 +24,8 @@ public class MenuController : MonoBehaviour
     private Animator highScoresAnimator;
     private int page = 1;
 
+    private AudioSource source;
+
     #endregion
 
     #region Awake function
@@ -45,7 +47,14 @@ public class MenuController : MonoBehaviour
         instructionAnimator = instruction.GetComponent<Animator>();
         highScoresAnimator = highScores.GetComponent<Animator>();
 
+        SetLogInButton();
+        SetMuteButton();
+
         prevButton.enabled = false;
+
+        source = gameObject.GetComponent<AudioSource>();
+
+        source.Play();
 	}
 
     #endregion
@@ -55,6 +64,7 @@ public class MenuController : MonoBehaviour
     void Update()
     {
         SetLogInButton();
+        SetMuteButton();
     }
 
     #endregion
@@ -63,6 +73,8 @@ public class MenuController : MonoBehaviour
 
     public void StartGameClick()
     {
+        if (source != null)
+            source.Stop();
         GameController.instance.InitGame();
     }
 
@@ -113,11 +125,13 @@ public class MenuController : MonoBehaviour
         {
             GameController.instance.muted = 1;
             PlayerPrefs.SetInt("muted", 1);
+            GameController.instance.audioController.Mute(true);
         }
         else
         {
             GameController.instance.muted = 0;
             PlayerPrefs.SetInt("muted", 0);
+            GameController.instance.audioController.Mute(false);
         }
 
         SetMuteButton();
