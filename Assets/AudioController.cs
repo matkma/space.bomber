@@ -7,8 +7,10 @@ public class AudioController : MonoBehaviour
 
 	void Awake() 
     {
-        AudioListener.volume = 0f;
-
+        if (GameController.instance.muted == 1)
+            AudioListener.volume = 0f;
+        else
+            AudioListener.volume = 1f;
 	}
 
     #endregion

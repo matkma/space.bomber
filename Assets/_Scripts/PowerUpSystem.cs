@@ -179,8 +179,19 @@ public class PowerUpSystem : MonoBehaviour
                 switch(collectedPowerUps[i].identifier)
                 {
                     case "FirstAidKit":
-                        if (levelController.health < 5)
-                            levelController.health += 1;
+                        if (GameController.instance.rushMode)
+                        {
+                            levelController.fRushTimer -= 5f;
+                        }
+                        else
+                        {
+                            if (levelController.health < 5)
+                            {
+                                levelController.health += 1;
+                                levelController.livesText.text = "Lives: " + levelController.health;
+                            }
+                        }
+                       
                         break;
 
                     case "FasterCollector":

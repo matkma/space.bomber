@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using GooglePlayGames;
+
 using Random = UnityEngine.Random;
 
 public class LevelController : MonoBehaviour
@@ -33,6 +35,7 @@ public class LevelController : MonoBehaviour
     public GameObject endGameBox;
     public Text[] texts;
     public Button endGameButton;
+    public Button againButton;
 
     private float spawnCounter = 0f;
     private float cleanerCounter = 0f;
@@ -57,6 +60,12 @@ public class LevelController : MonoBehaviour
 
     private AudioSource[] sources;
 
+
+    private int rushTimer;
+
+    [HideInInspector]
+    public float fRushTimer;
+
     #endregion
 
     #region Awake function
@@ -70,9 +79,22 @@ public class LevelController : MonoBehaviour
 
         powerUpSystem = gameObject.GetComponent<PowerUpSystem>();
 
+        score = 0;
+
         scoreText.text = "Score: " + score;
 
-        livesText.text = "Lives: " + health;
+        rushTimer = 0;
+        fRushTimer = 0f;
+
+        if (GameController.instance.rushMode)
+        {
+            livesText.text = "Time: " + rushTimer; 
+        }
+        else
+        {
+            livesText.text = "Lives: " + health;
+        }
+        
 
         sources = gameObject.GetComponents<AudioSource>();
 
@@ -84,6 +106,8 @@ public class LevelController : MonoBehaviour
         {
             sources[1].Play();
         }
+
+        
 	}
 
     #endregion
@@ -94,6 +118,15 @@ public class LevelController : MonoBehaviour
     {
         if (!gameOver)
         {
+            if (GameController.instance.rushMode)
+            {
+                fRushTimer += Time.deltaTime;
+                rushTimer = (int) Mathf.Floor(fRushTimer);
+
+                livesText.text = "Time: " + rushTimer;
+            }
+                
+
             #region Collector launched logic 
 
             if (collector != null && collector.explosionDuration == 0 && collector.launched == true)
@@ -103,9 +136,12 @@ public class LevelController : MonoBehaviour
                     powerUpSystem.LaunchPowerUps();
 
                     GameController.instance.itemsCount += collector.collectedCounter;
-                    PlayerPrefs.SetInt("itemsCount", GameController.instance.itemsCount);
-
-                    GameController.instance.CheckCollectorAchievements(collector.collectedCounter);
+                    
+                    if (Social.localUser.authenticated)
+                    {
+                        GameController.instance.CheckCollectorAchievements(collector.collectedCounter);
+                    }
+                    
 
                     int points = (int)((collector.points * (Mathf.Log10(collector.collectedCounter - 1) + 1)) * powerUpSystem.multiplier);
                     score += points;
@@ -124,9 +160,11 @@ public class LevelController : MonoBehaviour
                         damageAC.SetTrigger("Damaged");
 
                         GameController.instance.redsCount += collector.hpLoss;
-                        PlayerPrefs.SetInt("redsCount", GameController.instance.redsCount);
 
-                        GameController.instance.CheckDamageAchievements(collector.hpLoss);
+                        if (Social.localUser.authenticated)
+                        {
+                            GameController.instance.CheckDamageAchievements(collector.hpLoss);
+                        }    
                     }
                     else
                         pointsText.color = new Color(0.772f, 1f, 0.345f, 0f);
@@ -148,8 +186,12 @@ public class LevelController : MonoBehaviour
                             if (collector.collectedCounter > GameController.instance.bestCombo)
                             {
                                 GameController.instance.bestCombo = collector.collectedCounter;
-                                PlayerPrefs.SetInt("bestCombo", collector.collectedCounter);
-                                Social.ReportScore(collector.collectedCounter, SpaceBomber.GPGSIds.leaderboard_best_combo, (bool success) => { });
+
+                                if (Social.localUser.authenticated)
+                                {
+                                    PlayerPrefs.SetInt("bestCombo", collector.collectedCounter);
+                                    Social.ReportScore(collector.collectedCounter, SpaceBomber.GPGSIds.leaderboard_best_combo, (bool success) => { });
+                                }
                             }
                         } 
 
@@ -164,9 +206,11 @@ public class LevelController : MonoBehaviour
                         else if (collector.collectedCounter > 3)
                         {
                             GameController.instance.combosCount += 1;
-                            PlayerPrefs.SetInt("combosCount", GameController.instance.combosCount);
 
-                            GameController.instance.CheckCombosAchievements();
+                            if (Social.localUser.authenticated)
+                            {
+                                GameController.instance.CheckCombosAchievements();
+                            }  
                         }
                     }
 
@@ -174,23 +218,39 @@ public class LevelController : MonoBehaviour
                     {
                         health -= collector.hpLoss;
 
-                        if (health <= 0)
+                        if (GameController.instance.rushMode)
                         {
-                            health = 0;
-                            livesText.text = "Lives: " + health;
-                            damageAC.SetTrigger("Damaged");
-                            livesAC.SetTrigger("Scored");
-
-                            GameOver();
+                            if (collector.hpLoss > 0)
+                            {
+                                fRushTimer += 10f * collector.hpLoss;
+                                livesText.text = "Time: " + rushTimer;
+                                damageAC.SetTrigger("Damaged");
+                                livesAC.SetTrigger("Scored");
+                            }     
                         }
-                        if (collector.hpLoss > 0)
+                        else
                         {
-                            livesText.text = "Lives: " + health;
-                            livesAC.SetTrigger("Scored");
+                            if (health <= 0)
+                            {
+                                health = 0;
+                                livesText.text = "Lives: " + health;
+                                damageAC.SetTrigger("Damaged");
+                                livesAC.SetTrigger("Scored");
+
+                                GameOver();
+                            }
+                            if (collector.hpLoss > 0)
+                            {
+                                livesText.text = "Lives: " + health;
+                                damageAC.SetTrigger("Damaged");
+                                livesAC.SetTrigger("Scored");
+                            }
                         }
                     }
 
-                    PlayerPrefs.Save();
+                    if (Social.localUser.authenticated)
+                        PlayerPrefs.Save();
+
                     pointsAC.SetTrigger("Scored");
                 }
 
@@ -204,6 +264,11 @@ public class LevelController : MonoBehaviour
                 collector.GetComponent<MeshRenderer>().enabled = false;
 
                 collector = null;   
+
+                if (GameController.instance.rushMode == true && score >= 10000)
+                {
+                    GameOver();
+                }
             }
 
             #endregion
@@ -320,9 +385,20 @@ public class LevelController : MonoBehaviour
             if (gameOverTimer >= 3.2f)
             {
                 endGameButton.enabled = true;
+                againButton.enabled = true;
 
                 if (Social.localUser.authenticated)
-                    Social.ReportScore(score, SpaceBomber.GPGSIds.leaderboard_high_scores, (bool success) => { });
+                {
+                    if (GameController.instance.rushMode)
+                    {
+                        Social.ReportScore(rushTimer * 1000, SpaceBomber.GPGSIds.leaderboard_best_rush, (bool success) => { });
+                    }
+                    else
+                    {
+                        Social.ReportScore(score, SpaceBomber.GPGSIds.leaderboard_high_scores, (bool success) => { });
+                    }
+                }
+                    
 
                 if (score > GameController.instance.highScore)
                 {
@@ -332,6 +408,14 @@ public class LevelController : MonoBehaviour
                     PlayerPrefs.Save();
 
                     GameController.instance.CheckScoreAchievements();
+                }
+                
+                if (GameController.instance.rushMode && (rushTimer < GameController.instance.bestRush || GameController.instance.bestRush <= 0))
+                {
+                    texts[4].enabled = true;
+                    GameController.instance.bestRush = rushTimer;
+                    PlayerPrefs.SetInt("bestRush", rushTimer);
+                    PlayerPrefs.Save();
                 }
             }
             else if (gameOverTimer >= 2.8f && texts[3].enabled == false)
@@ -348,6 +432,7 @@ public class LevelController : MonoBehaviour
             }
             else if (gameOverTimer >= 1.6f && texts[0].enabled == false)
             {
+                GameController.instance.UpdateAllAchievements();
                 texts[0].enabled = true;
                 endGameBox.GetComponent<Animator>().SetTrigger("Score");
             }
@@ -400,6 +485,11 @@ public class LevelController : MonoBehaviour
         GameController.instance.BackToMenu();
     }
 
+    public void ContinueButtonClick()
+    {
+        Application.LoadLevel("Level");
+    }
+
     #endregion 
 
     #region Private functions
@@ -413,12 +503,22 @@ public class LevelController : MonoBehaviour
     {
         endGamePanel.SetActive(true);
 
-        texts[0].text = score.ToString();
+        if (GameController.instance.rushMode)
+        {
+            TimeSpan time = TimeSpan.FromSeconds(rushTimer);
+
+            texts[0].text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
+        }
+        else
+        {
+            texts[0].text = score.ToString();
+        }
         texts[1].text = "Best Combo: " + bestCombo;
         texts[2].text = "Collected items: " + collectedItems;
         texts[3].text = "Missed items: " + missedItems;
 
         endGameButton.enabled = false;
+        againButton.enabled = true;
 
         for (int i = 0; i < 5; i++)
         {

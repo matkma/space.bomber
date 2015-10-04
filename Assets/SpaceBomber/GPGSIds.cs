@@ -37,6 +37,7 @@ public static class GPGSIds
         public const string achievement_excellent_combo = "CgkIwp_Z9tsbEAIQIQ"; // <GPGSID>
         public const string achievement_combo_osensei = "CgkIwp_Z9tsbEAIQFQ"; // <GPGSID>
         public const string achievement_wounded = "CgkIwp_Z9tsbEAIQBw"; // <GPGSID>
+        public const string leaderboard_best_rush = "CgkIwp_Z9tsbEAIQKA"; // <GPGSID>
         public const string achievement_platinum = "CgkIwp_Z9tsbEAIQDg"; // <GPGSID>
         public const string achievement_diamond = "CgkIwp_Z9tsbEAIQDw"; // <GPGSID>
         public const string achievement_bronze = "CgkIwp_Z9tsbEAIQCw"; // <GPGSID>

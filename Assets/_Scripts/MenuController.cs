@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 using GooglePlayGames;
 
@@ -11,8 +12,9 @@ public class MenuController : MonoBehaviour
     public GameObject mainMenu;
     public GameObject instruction;
     public GameObject highScores;
+    public GameObject startGame;
     public Text bestScore;
-    public Text bestCombo;
+    public Text bestRush;
     public GameObject[] instrunctionPages;
 
     private Button nextButton;
@@ -22,6 +24,7 @@ public class MenuController : MonoBehaviour
     private Animator menuAnimator;
     private Animator instructionAnimator;
     private Animator highScoresAnimator;
+    private Animator startGameAnimator;
     private int page = 1;
 
     private AudioSource source;
@@ -39,6 +42,7 @@ public class MenuController : MonoBehaviour
 
         instruction.SetActive(true);
         highScores.SetActive(true);
+        startGame.SetActive(true);
 
         nextButton = GameObject.Find("Next").GetComponent<Button>();
         prevButton = GameObject.Find("Prev").GetComponent<Button>();
@@ -46,26 +50,15 @@ public class MenuController : MonoBehaviour
         menuAnimator = mainMenu.GetComponent<Animator>();
         instructionAnimator = instruction.GetComponent<Animator>();
         highScoresAnimator = highScores.GetComponent<Animator>();
+        startGameAnimator = startGame.GetComponent<Animator>();
 
-        SetLogInButton();
-        SetMuteButton();
+        if (PlayerPrefs.GetInt("firstTime", 1) == 1)
+        {
+            menuAnimator.SetTrigger("firstTime");
+        }
 
         prevButton.enabled = false;
-
-        source = gameObject.GetComponent<AudioSource>();
-
-        source.Play();
 	}
-
-    #endregion
-
-    #region Update function
-
-    void Update()
-    {
-        SetLogInButton();
-        SetMuteButton();
-    }
 
     #endregion
 
@@ -73,8 +66,23 @@ public class MenuController : MonoBehaviour
 
     public void StartGameClick()
     {
+        menuAnimator.SetTrigger("forward");
+        startGameAnimator.SetTrigger("forward");
+    }
+
+    public void NormalModeClick()
+    {
         if (source != null)
             source.Stop();
+        GameController.instance.rushMode = false;
+        GameController.instance.InitGame();
+    }
+
+    public void RushModeClick()
+    {
+        if (source != null)
+            source.Stop();
+        GameController.instance.rushMode = true;
         GameController.instance.InitGame();
     }
 
@@ -82,12 +90,23 @@ public class MenuController : MonoBehaviour
     {
         menuAnimator.SetTrigger("forward");
         instructionAnimator.SetTrigger("forward");
+
+        if (GameController.instance.firstTime == 1)
+        {
+            GameController.instance.firstTime = 0;
+            PlayerPrefs.SetInt("firstTime", 0);
+            PlayerPrefs.Save();
+        }
     }
 
     public void HighScoresClick()
     {
+        TimeSpan time = TimeSpan.FromSeconds(GameController.instance.bestRush);
+
         bestScore.text = GameController.instance.highScore.ToString();
-        bestCombo.text = GameController.instance.bestCombo.ToString();
+
+        bestRush.text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
+
         menuAnimator.SetTrigger("forward");
         highScoresAnimator.SetTrigger("forward");
     }
@@ -116,7 +135,6 @@ public class MenuController : MonoBehaviour
             Social.localUser.Authenticate((bool success) => { });
         }
 
-        SetLogInButton();
     }
 
     public void MuteClick()
@@ -134,7 +152,6 @@ public class MenuController : MonoBehaviour
             GameController.instance.audioController.Mute(false);
         }
 
-        SetMuteButton();
         PlayerPrefs.Save();
     }
 
@@ -149,6 +166,12 @@ public class MenuController : MonoBehaviour
     public void BackClick()
     {
         highScoresAnimator.SetTrigger("back");
+        menuAnimator.SetTrigger("back");
+    }
+
+    public void StartGameBackClick()
+    {
+        startGameAnimator.SetTrigger("back");
         menuAnimator.SetTrigger("back");
     }
 
@@ -207,30 +230,6 @@ public class MenuController : MonoBehaviour
         }
 
         instrunctionPages[0].SetActive(true);
-    }
-
-    void SetLogInButton()
-    {
-        if (Social.localUser.authenticated)
-        {
-            buttons[6].GetComponentInChildren<Text>().text = "Logout";
-        }
-        else
-        {
-            buttons[6].GetComponentInChildren<Text>().text = "Login";
-        }
-    }
-
-    void SetMuteButton()
-    {
-        if (GameController.instance.muted == 0)
-        {
-            buttons[5].GetComponentInChildren<Text>().text = "Mute";
-        }
-        else
-        {
-            buttons[5].GetComponentInChildren<Text>().text = "Unmute";
-        }
     }
 
     #endregion
